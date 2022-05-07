@@ -1,14 +1,9 @@
-# syntax=docker/dockerfile:1
-
-FROM golang:1.18
+FROM golang:1.18.1-alpine3.15 AS builder
 
 WORKDIR /app
+COPY hello.go ./
+RUN go build hello.go
 
-COPY go.mod ./
-RUN go mod download
-
-COPY *.go ./
-
-RUN go build -o /codeeducation
-
-CMD [ "/codeeducation" ]
+FROM scratch
+COPY --from=builder /app/hello .
+CMD ["/hello"]
